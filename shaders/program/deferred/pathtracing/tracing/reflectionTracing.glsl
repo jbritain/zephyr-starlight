@@ -73,8 +73,8 @@ void main ()
 
             vec3 diffuse, direct;
 
-            if (floor(hitUv.xy) == 0.0 && lengthSquared(hitPos - screenToPlayerPos(vec3(hitUv.xy, texelFetch(depthtex1, ivec2(hitUv.xy * renderSize), 0).x)).xyz) < 0.0025) {
-                diffuse = texelFetch(colortex12, ivec2(hitUv.xy * renderSize), 0).rgb;
+            if (floor(hitUv.xy) == vec2(0.0) && lengthSquared(hitPos - screenToPlayerPos(vec3(hitUv.xy, texelFetch(depthtex1, ivec2(hitUv.xy * renderSize), 0).x)).xyz) < 0.0025) {
+                diffuse = texelFetch(colortex3, ivec2(hitUv.xy * renderSize), 0).rgb;
                 direct = texelFetch(colortex5, ivec2(hitUv.xy * renderSize), 0).rgb;
             } else {
                 IRCResult query = irradianceCache(specularRay.origin + specularRay.direction * rt.dist, rt.normal, 0u);
