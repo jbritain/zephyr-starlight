@@ -10,7 +10,7 @@
 #include "/include/raytracing.glsl"
 #include "/include/textureData.glsl"
 #include "/include/brdf.glsl"
-#include "/include/irc.glsl"
+#include "/include/ircache.glsl"
 #include "/include/spaceConversion.glsl"
 
 layout (rgba16f) uniform image2D colorimg2;

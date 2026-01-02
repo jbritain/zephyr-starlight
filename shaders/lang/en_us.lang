@@ -27,15 +27,16 @@ screen.PT_REFLECTION = Reflections
 screen.PT_SHADOW     = Shadows
 screen.PT_DENOISING  = Denoising
 
-option.SMOOTH_IRC    = Smooth Irradiance Cache
-option.NOISE_METHOD  = Noise Method
+option.SMOOTH_IRCACHE    = Smooth Irradiance Cache
+option.NOISE_METHOD      = Noise Method
 
 value.NOISE_METHOD.0 = White Noise
 value.NOISE_METHOD.1 = Blue Noise
 
-option.PRIMARY_GI_SAMPLES            = Primary GI Samples
+option.DIFFUSE_SAMPLES               = Diffuse Samples
 option.DIFFUSE_MAX_RT_DISTANCE       = Diffuse Trace Distance
 option.PT_DIFFUSE_ACCUMULATION_LIMIT = Max Accumulated Frames
+option.DIFFUSE_DENOISE_PASSES        = Denoising Passes
 option.SUNLIGHT_GI_QUALITY           = Sunlight GI Quality
 
 option.REFLECTION_SAMPLES               = Reflection Samples
@@ -52,10 +53,10 @@ option.DENOISER_DEPTH_WEIGHT  = Denoiser Depth Weight
 option.DENOISER_NORMAL_WEIGHT = Denoiser Normal Weight
 option.DENOISER_SHARPENING    = Denoiser Sharpness
 
-option.IRC_VOXEL_ARRAY_SIZE = IRC Voxel Array Size
-option.IRC_PROBE_ATTEMPTS   = IRC Probe Attempts
-option.IRC_UPDATE_INTERVAL  = IRC Update Interval
-option.IRC_MAX_RT_DISTANCE  = IRC Trace Distance
+option.IRCACHE_VOXEL_ARRAY_SIZE = Voxel Array Size
+option.IRCACHE_PROBE_ATTEMPTS   = Probe Attempts
+option.IRCACHE_UPDATE_INTERVAL  = Update Interval
+option.IRCACHE_MAX_RT_DISTANCE  = Trace Distance
 
 option.VOXELIZATION_DISTANCE   = Voxelization Distance
 option.entityShadowDistanceMul = Entity Voxelization Distance Multiplier
@@ -81,12 +82,19 @@ option.SUN_AZIMUTH_ROTATION = Sun Azimuth Rotation
 
 option.SKY_MIE          = Mie Amount
 option.SKY_OZONE        = Ozone Amount
+option.SKY_RAYLEIGH_R   = Rayleigh Amount (R)
+option.SKY_RAYLEIGH_G   = Rayleigh Amount (G)
+option.SKY_RAYLEIGH_B   = Rayleigh Amount (B)
 option.NIGHT_BRIGHTNESS = Night Brightness
 
 option.NORMAL_MAPPING      = Normal Mapping
 option.SPECULAR_MAPPING    = Specular Mapping
 option.EMISSION_BRIGHTNESS = Emission Brightness
 option.GLASS_REFLECTANCE   = Glass Reflectance
+option.WATER_ABSORPTION_R  = Water Absorption (R)
+option.WATER_ABSORPTION_G  = Water Absorption (G)
+option.WATER_ABSORPTION_B  = Water Absorption (B)
+option.WATER_REFLECTANCE   = Water Reflectance 
 option.IPBR                = Hardcoded Emission
 
 option.TAA = TAA
@@ -110,3 +118,5 @@ option.CHROMATIC_ABERRATION_SAMPLES = Chromatic Aberration Samples
 option.HAND_FOV               = Hand FOV
 option.DISABLE_DENOISING      = Disable Denoising
 option.FORCE_TRIANGLE_TRACING = Force Triangle Tracing
+
+suffix.HAND_FOV               = °

@@ -16,7 +16,7 @@ in VSOUT
     flat uint packedNormal;
 } vsout;
 
-/* DRAWBUFFERS:89 */
+/* RENDERTARGETS: 8,9 */
 layout (location = 0) out uvec4 materialData0;
 layout (location = 1) out uvec4 materialData1;
 

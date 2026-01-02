@@ -53,7 +53,7 @@
 
         vec3 normal = cross(tangent, bitangent);
 
-        bool doBackFaceCull = vsout[0].id.x == 1;
+        bool doBackFaceCull = vsout[0].id.x == 1 || vsout[0].id.x == 100;
         if (all(lessThan(abs(normal), vec3(0.00005))) || (doBackFaceCull && dot(normal, vec3(1.0, 0.5, 0.8)) < 0.0)) return;
 
         doBackFaceCull = doBackFaceCull || (renderStage == MC_RENDER_STAGE_TERRAIN_TRANSLUCENT);

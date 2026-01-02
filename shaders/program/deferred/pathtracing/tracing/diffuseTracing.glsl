@@ -10,7 +10,7 @@
 #include "/include/raytracing.glsl"
 #include "/include/textureData.glsl"
 #include "/include/brdf.glsl"
-#include "/include/irc.glsl"
+#include "/include/ircache.glsl"
 #include "/include/atmosphere.glsl"
 #include "/include/spaceConversion.glsl"
 
@@ -53,7 +53,7 @@ void main ()
     diffuseRay.origin = playerPos.xyz + mat.geoNormal * 0.005;
     vec3 radiance = vec3(0.0);
 
-    for (int i = 0; i < PRIMARY_GI_SAMPLES; i++) {
+    for (int i = 0; i < DIFFUSE_SAMPLES; i++) {
         #if NOISE_METHOD == 1
             diffuseRay.direction = randomHemisphereDirBlueNoise(ivec2(gl_GlobalInvocationID.xy), mat.geoNormal, i);
         #else
@@ -63,7 +63,7 @@ void main ()
         RayHitInfo rt = TraceRay(diffuseRay, DIFFUSE_MAX_RT_DISTANCE, true, true);
 
         if (rt.dist != DIFFUSE_MAX_RT_DISTANCE) {        
-            IRCResult query = queryIRC(diffuseRay.origin + diffuseRay.direction * rt.dist, rt.normal, 0u);
+            IRCResult query = irradianceCache(diffuseRay.origin + diffuseRay.direction * rt.dist, rt.normal, 0u);
             radiance += max(0.0, dot(mat.textureNormal, diffuseRay.direction)) * (rt.albedo.rgb * rt.emission + query.diffuseIrradiance * smoothstep(rt.dist, 0.0, 1.0) * rt.albedo.rgb);
 
             vec3 dir = sampleSunDir(shadowDir, vec2(randomValue(state), randomValue(state)));
@@ -89,12 +89,15 @@ void main ()
 
                 radiance += sunlight;
             }
-        } else {
-            radiance += rt.albedo.rgb * max(0.0, dot(mat.textureNormal, diffuseRay.direction)) * sampleSkyView(diffuseRay.direction);
-        }
+        } 
+        #ifndef DIMENSION_END
+            else {
+                radiance += rt.albedo.rgb * max(0.0, dot(mat.textureNormal, diffuseRay.direction)) * sampleSkyView(diffuseRay.direction);
+            }
+        #endif
     }
 
-    radiance *= rcp(PRIMARY_GI_SAMPLES);
+    radiance *= rcp(DIFFUSE_SAMPLES);
 
     imageStore(colorimg2, ivec2(gl_GlobalInvocationID.xy), vec4(4.0 * radiance, 1.0));
 }

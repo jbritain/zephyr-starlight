@@ -11,7 +11,7 @@
 
     #include "/include/text.glsl"
 
-    /* DRAWBUFFERS:2 */
+    /* RENDERTARGETS: 2 */
     layout (location = 0) out vec4 filteredData;
 
     const vec2 kernel[8] = vec2[8](
@@ -19,10 +19,10 @@
         vec2(3.0, -2.0),
         vec2(-4.0, 6.0),
         vec2(6.0, 4.0),
-        vec2(0.0, 32.0),
-        vec2(32.0, 0.0),
         vec2(-16.0, 16.0),
-        vec2(16.0, 16.0)
+        vec2(16.0, 16.0),
+        vec2(0.0, 32.0),
+        vec2(32.0, 0.0)
     );
 
     void main ()
@@ -62,7 +62,7 @@
                     float sampleWeight = exp(-temporalWeight * (
                           DENOISER_NORMAL_WEIGHT * currPos.w * (-dot(sampleNormal, currNormal) * 0.5 + 0.5)
                         + DENOISER_DEPTH_WEIGHT * abs(dot(currGeoNormal, posDiff))
-                        + DENOISER_SHARPENING * max(0.0, FILTER_PASS - 1.5) * min(pow(lengthSquared(sampleData.rgb - currData.rgb), 0.15), 0.1)
+                        + DENOISER_SHARPENING * max(0.0, FILTER_PASS - 1.5) * min(pow(lengthSquared(sampleData.rgb - currData.rgb), 0.16), 0.09)
                         )
                     );
 

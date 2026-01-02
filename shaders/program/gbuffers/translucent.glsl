@@ -16,7 +16,7 @@ in VSOUT
     flat uint blockId;
 } vsout;
 
-/* DRAWBUFFERS:1 */
+/* RENDERTARGETS: 1 */
 layout (location = 0) out uvec4 colortex1Out;
 
 void main ()

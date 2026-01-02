@@ -9,13 +9,14 @@
 #include "/include/raytracing.glsl"
 #include "/include/textureData.glsl"
 #include "/include/brdf.glsl"
-#include "/include/irc.glsl"
+#include "/include/ircache.glsl"
 #include "/include/spaceConversion.glsl"
 #include "/include/textureSampling.glsl"
 #include "/include/atmosphere.glsl"
 #include "/include/heitz.glsl"
+#include "/include/text.glsl"
 
-/* DRAWBUFFERS:7 */
+/* RENDERTARGETS: 7 */
 layout (location = 0) out vec4 color;
 
 void main ()
@@ -23,9 +24,10 @@ void main ()
     ivec2 texel = ivec2(gl_FragCoord.xy);
 
     float depth = texelFetch(depthtex0, ivec2(gl_FragCoord.xy), 0).r;
+    float depth1 = texelFetch(depthtex1, texel, 0).r;
     color = texelFetch(colortex7, texel, 0);
 
-    if (texelFetch(depthtex1, texel, 0).r == depth) return;
+    if (depth1 == depth) return;
     
     TranslucentMaterial mat = unpackTranslucentMaterial(texel);
 
@@ -33,7 +35,7 @@ void main ()
 
     vec4 rayPos = screenToPlayerPos(vec3(gl_FragCoord.xy * texelSize, depth));
     vec3 rayDir = normalize(rayPos.xyz - screenToPlayerPos(vec3(gl_FragCoord.xy * texelSize, 0.000001)).xyz);
-    Ray ray = Ray(rayPos.xyz + mat.normal * 0.003, reflect(rayDir, mat.normal));
+    Ray ray = Ray(rayPos.xyz + mat.normal * 0.01, reflect(rayDir, mat.normal));
 
     RayHitInfo rt = TraceRay(ray, 1024.0, true, true);
 
@@ -48,15 +50,15 @@ void main ()
             rayColor += max(rt.albedo.rgb, rt.F0) * texelFetch(colortex12, hitTexel, 0).rgb;
             rayColor += getLightTransmittance(shadowDir) * lightBrightness * texelFetch(colortex5, hitTexel, 0).rgb * evalCookBRDF(shadowDir, ray.direction, max(0.1, rt.roughness), rt.normal, rt.albedo.rgb, rt.F0);
         } else {
-            #ifdef SMOOTH_IRC
+            #ifdef SMOOTH_IRCACHE
                 float theta = TWO_PI * heitzSample(ivec2(gl_FragCoord.xy), frameCounter, 0);
                 float phi = heitzSample(ivec2(gl_FragCoord.xy), frameCounter, 1);
 
                 vec3 dir = tbnNormal(rt.normal) * vec3((1.0 - sqrt(1.0 - sqrt(phi))) * vec2(sin(theta), cos(theta)), 0.0);
 
-                IRCResult q = queryIRC(hitPos + dir * min1(TraceRay(Ray(hitPos + rt.normal * 0.003, dir), 1.0, false, false).dist - 0.001), rt.normal, 0u);
+                IRCResult q = irradianceCache(hitPos + dir * min1(TraceRay(Ray(hitPos + rt.normal * 0.003, dir), 1.0, false, false).dist - 0.001), rt.normal, 0u);
             #else
-                IRCResult q = queryIRC(hitPos, rt.normal, 0u);
+                IRCResult q = irradianceCache(hitPos, rt.normal, 0u);
             #endif
 
             rayColor += max(rt.albedo.rgb, rt.F0) * q.diffuseIrradiance;
@@ -66,5 +68,20 @@ void main ()
         rayColor += rt.albedo.rgb * sampleSkyView(ray.direction);
     }
 
-    color = vec4(mix(color.rgb * mat.albedo.rgb, rayColor, schlickFresnel(vec3(GLASS_REFLECTANCE), -dot(rayDir, mat.normal))), 1.0);
+    vec3 transmittance;
+
+    if (mat.blockId == 100) transmittance = exp(-vec3(WATER_ABSORPTION_R, WATER_ABSORPTION_G, WATER_ABSORPTION_B) * distance(rayPos.xyz, screenToPlayerPos(vec3(gl_FragCoord.xy * texelSize, depth1)).xyz));
+    else transmittance = mat.albedo.rgb;
+
+    color = vec4(mix(color.rgb * transmittance, rayColor, schlickFresnel(vec3(mat.blockId == 100 ? WATER_REFLECTANCE : GLASS_REFLECTANCE), -dot(rayDir, mat.normal))), 1.0);
+
+    #define FONT_SIZE 2 // [1 2 3 4 5 6 7 8]
+	
+	beginText(ivec2(gl_FragCoord.xy / FONT_SIZE), ivec2(20, viewHeight / FONT_SIZE - 20));
+	text.fgCol = vec4(vec3(1.0), 1.0);
+	text.bgCol = vec4(vec3(0.0), 0.0);
+	
+    printUnsignedInt(mat.blockId);
+
+	endText(color.rgb);
 }

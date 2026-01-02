@@ -7,20 +7,20 @@
 #include "/include/textureSampling.glsl"
 #include "/include/text.glsl"
 
-layout (local_size_x = 128) in;
+layout (local_size_x = 256) in;
 const ivec3 workGroups = ivec3(1, 1, 1);
 
-shared float averageExposure[256];
+shared float averageExposure[512];
 
 void main ()
 {
     for (int i = 0; i < 2; i++) {
-        averageExposure[gl_LocalInvocationID.x * 2 + i] = clamp(luminance(texelFetch(colortex10, ivec2(screenSize * R2(256 * (frameCounter & 3) + 2 * gl_LocalInvocationID.x + i)), 0).rgb), 0.001, 0.05);
+        averageExposure[gl_LocalInvocationID.x * 2 + i] = clamp(luminance(texelFetch(colortex10, ivec2(screenSize * R2(512 * (frameCounter & 7) + 2 * gl_LocalInvocationID.x + i)), 0).rgb), 0.001, 0.04);
     }
 
     barrier();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
         uint index = ((2 * gl_LocalInvocationID.x) & ~((1 << (i + 1)) - 1)) + (1 << i) - 1;
         uint offset = 1 + (gl_LocalInvocationID.x & ((1 << i) - 1));
 
@@ -29,5 +29,5 @@ void main ()
         barrier();
     }
 
-    if (gl_LocalInvocationID.x == 0) renderState.globalLuminance = mix(renderState.globalLuminance, averageExposure[255] / 256.0, ADAPTATION_SPEED);
+    if (gl_LocalInvocationID.x == 0) renderState.globalLuminance = mix(renderState.globalLuminance, clamp(averageExposure[511] / 512.0, 0.0015, 0.025), ADAPTATION_SPEED);
 }

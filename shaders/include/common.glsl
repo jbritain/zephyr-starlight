@@ -132,7 +132,7 @@
     vec2 octEncode (in vec3 n) 
     {
         n.xyz /= abs(n.x) + abs(n.y) + abs(n.z);
-        float t = max(-n.y, 0.0);
+        float t = max0(-n.y);
         n.x += (n.x > 0.0) ? t : -t;
         n.z += (n.z > 0.0) ? t : -t;
         return n.xz * 0.5 + 0.5;
@@ -143,7 +143,7 @@
         f = f * 2.0 - 1.0;
  
         vec3 n = vec3(f.x, 1.0 - abs(f.x) - abs(f.y), f.y);
-        float t = max(-n.y, 0.0);
+        float t = max0(-n.y);
         n.x += n.x >= 0.0 ? -t : t;
         n.z += n.z >= 0.0 ? -t : t;
         return normalize(n);
@@ -154,13 +154,13 @@
         return mat3(tangent.xyz, cross(tangent.xyz, normal) * sign(tangent.w), normal);
     }
 
-    mat3 tbnNormal(vec3 normal) {
+    mat3 tbnNormal (vec3 normal) 
+    {
         return tbnNormalTangent(normal, vec4(normalize(cross(normal, vec3(0.0, 1.0, (normal.y * normal.z) < 0.0 ? 1.0 : -1.0))), 1.0));
     }
 
     vec3 sampleSunDir (vec3 lightDir, vec2 dither)
     {
-        //dither = dither * 2.0 - 1.0;
         return tbnNormal(lightDir) * vec3(sqrt(dither.y) * vec2(cos(TWO_PI * dither.x), sin(TWO_PI * dither.x)), rcp(SUN_SIZE));
     }
 
@@ -196,7 +196,7 @@
 
     vec2 R2 (uint t)
     {
-        return fract(vec2(t) * vec2(0.245122333753, 0.430159709002));
+        return fract(vec2(t) * vec2(0.2451223, 0.4301597));
     }
 
     vec3 R3 (uint t)
@@ -233,6 +233,8 @@
         return mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
     }
 
+    // Adapted from https://www.youtube.com/watch?v=Qz0KTGYJtUk&t=674s
+
     uint randomInt (inout uint state)
     {
         state = state * 747796405u + 2891336453u;
@@ -259,11 +261,6 @@
     {
         vec3 dir = randomDir(state);
         return dir * sign(dot(dir, normal));
-    }
-
-    vec3 randomHemisphereDir (vec3 normal, vec2 rand)
-    {
-        return tbnNormal(normal) * vec3(tan(rand * PI - HALF_PI), 1.0);
     }
 
     uint packPosition (ivec3 pos) 

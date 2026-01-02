@@ -20,7 +20,7 @@ in VSOUT
     flat uint blockId;
 } vsout;
 
-/* DRAWBUFFERS:89 */
+/* RENDERTARGETS: 8,9 */
 layout (location = 0) out uvec4 colortex8Out;
 layout (location = 1) out uvec4 colortex9Out;
 

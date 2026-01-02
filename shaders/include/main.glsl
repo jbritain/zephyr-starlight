@@ -108,7 +108,7 @@
     layout (std430, binding = 2) buffer irradiance_cache
     {
         IRCVoxel entries[];
-    } irradianceCache;
+    } ircache;
 
     layout (std430, binding = 3) buffer voxel_buffer
     {
@@ -229,7 +229,7 @@
 
         result.albedo = unpackUnorm4x8(data.x);
         result.normal = octDecode(unpack2x8(data.y >> 16u));
-        result.blockId = data.y & 32767u;
+        result.blockId = data.y & 0x00007fffu;
         result.isRain = (data.y & 0x00008000u) == 0x00008000u;
 
         return result;

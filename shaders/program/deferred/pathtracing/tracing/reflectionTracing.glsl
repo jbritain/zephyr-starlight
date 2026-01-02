@@ -10,7 +10,7 @@
 #include "/include/raytracing.glsl"
 #include "/include/textureData.glsl"
 #include "/include/brdf.glsl"
-#include "/include/irc.glsl"
+#include "/include/ircache.glsl"
 #include "/include/atmosphere.glsl"
 #include "/include/spaceConversion.glsl"
 
@@ -65,7 +65,7 @@ void main ()
         );
         RayHitInfo rt = TraceRay(specularRay, REFLECTION_MAX_RT_DISTANCE, true, true);
 
-        if (rt.dist != REFLECTION_MAX_RT_DISTANCE) {
+        if (rt.hit) {
             vec3 hitPos = specularRay.origin + rt.dist * specularRay.direction;
             vec3 hitUv = playerToScreenPos(hitPos);
 
@@ -73,11 +73,11 @@ void main ()
 
             vec3 diffuse, direct;
 
-            if (floor(hitUv.xy) == 0.0 && distance(hitPos, screenToPlayerPos(vec3(hitUv.xy, texelFetch(depthtex1, ivec2(hitUv.xy * renderSize), 0).x)).xyz) < 0.05) {
-                diffuse = texelFetch(colortex3, ivec2(hitUv.xy * renderSize), 0).rgb;
+            if (floor(hitUv.xy) == 0.0 && lengthSquared(hitPos - screenToPlayerPos(vec3(hitUv.xy, texelFetch(depthtex1, ivec2(hitUv.xy * renderSize), 0).x)).xyz) < 0.0025) {
+                diffuse = texelFetch(colortex12, ivec2(hitUv.xy * renderSize), 0).rgb;
                 direct = texelFetch(colortex5, ivec2(hitUv.xy * renderSize), 0).rgb;
             } else {
-                IRCResult query = queryIRC(specularRay.origin + specularRay.direction * rt.dist, rt.normal, 0u);
+                IRCResult query = irradianceCache(specularRay.origin + specularRay.direction * rt.dist, rt.normal, 0u);
 
                 diffuse = query.diffuseIrradiance;
                 direct = query.directIrradiance;
@@ -88,9 +88,12 @@ void main ()
             if (dot(rt.normal, shadowDir) > 0.0) {
                 radiance += getLightTransmittance(shadowDir) * lightBrightness * direct * evalCookBRDF(shadowDir, specularRay.direction, max(0.1, rt.roughness), rt.normal, rt.albedo.rgb, rt.F0);
             }
-        } else {
-            radiance += rt.albedo.rgb * sampleSkyView(specularRay.direction);
-        }
+        } 
+        #ifndef DIMENSION_END
+            else {
+                radiance += rt.albedo.rgb * sampleSkyView(specularRay.direction);
+            }
+        #endif
 
         parallaxDepth = min(parallaxDepth, rt.dist);
     }

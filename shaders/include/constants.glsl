@@ -14,11 +14,11 @@
     const float lineWidth = 1.0;
     const float handScale = cos(radians(HAND_FOV) / 2.0) / sin(radians(HAND_FOV) / 2.0);
 
-    const ivec3 voxelVolumeSize = ivec3(2 * VOXELIZATION_DISTANCE, min(256, 2 * VOXELIZATION_DISTANCE - 64 * int(VOXELIZATION_DISTANCE > 100)), 2 * VOXELIZATION_DISTANCE);
+    const ivec3 voxelVolumeSize = ivec3(2.0 * shadowDistance, min(256.0, 2.0 * shadowDistance - 64.0 * float(shadowDistance > 100.0)), 2.0 * shadowDistance);
     const ivec3 halfVoxelVolumeSize = voxelVolumeSize >> 1;
 
     #define END_MARKER 0x00ffffffu
-    #define IRC_INV_MARKER uvec2(3154164736u)
+    #define IRCACHE_INV_MARKER uvec2(3154164736u)
 
     /*  
         const int colortex0Format = RGB16F; // previous frame normal + depth

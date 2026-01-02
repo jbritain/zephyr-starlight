@@ -9,7 +9,7 @@
 #include "/include/raytracing.glsl"
 #include "/include/textureData.glsl"
 #include "/include/brdf.glsl"
-#include "/include/irc.glsl"
+#include "/include/ircache.glsl"
 
 layout (local_size_x = 1) in;
 

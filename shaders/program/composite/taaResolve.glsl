@@ -5,10 +5,11 @@
 #include "/include/pbr.glsl"
 #include "/include/main.glsl"
 #include "/include/textureSampling.glsl"
+#include "/include/spaceConversion.glsl"
 
 #include "/include/text.glsl"
 
-/* DRAWBUFFERS:6 */
+/* RENDERTARGETS: 6 */
 layout (location = 0) out vec4 history;
 
 void main ()
@@ -25,9 +26,7 @@ void main ()
 		for (int y = -1; y <= 1; y++)
 			depth = min(depth, texelFetch(depthtex1, clamp(srcTexel + ivec2(x, y), ivec2(0), ivec2(renderSize) - 1), 0).r);
 
-    vec4 currPos = gbufferModelViewProjectionInverse * vec4(vec3(uv, depth) * 2.0 - 1.0 - vec3(taaOffset, 0.0), 1.0);
-    currPos.xyz /= currPos.w;
-
+    vec4 currPos = screenToPlayerPos(vec3(uv, depth));
     vec4 prevPos = gbufferPreviousModelViewProjection * vec4(depth == 1.0 ? currPos.xyz : (currPos.xyz + cameraVelocity), 1.0);
     prevPos.xyz /= prevPos.w;
 

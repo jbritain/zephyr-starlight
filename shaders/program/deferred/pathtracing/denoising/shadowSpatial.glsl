@@ -11,7 +11,7 @@
 
     #include "/include/text.glsl"
 
-    /* DRAWBUFFERS:2 */
+    /* RENDERTARGETS: 2 */
     layout (location = 0) out vec4 filteredData;
 
     const vec2 kernel[4] = vec2[4](

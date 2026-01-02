@@ -10,7 +10,7 @@
     const vec2 scaleHeights = vec2(8000.0, 1250.0);
     const vec2 invScaleHeights = rcp(scaleHeights);
 
-    const vec3 betaR = pow(vec3(680.0, 530.0, 440.0), vec3(-4.0)) * 1e6;
+    const vec3 betaR = vec3(SKY_RAYLEIGH_R, SKY_RAYLEIGH_G, SKY_RAYLEIGH_B) * pow(vec3(680.0, 530.0, 440.0), vec3(-4.0)) * 1e6;
     const vec3 betaM = SKY_MIE * vec3(1e-5);
     
     const vec3 alphaR = betaR;

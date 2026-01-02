@@ -10,7 +10,7 @@
 
 #include "/include/text.glsl"
 
-/* DRAWBUFFERS:4 */
+/* RENDERTARGETS: 4 */
 layout (location = 0) out vec4 filteredData;
 
 void main ()

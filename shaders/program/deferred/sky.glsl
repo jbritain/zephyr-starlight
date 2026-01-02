@@ -5,14 +5,14 @@
 #include "/include/pbr.glsl"
 #include "/include/main.glsl"
 #include "/include/textureSampling.glsl"
-#include "/include/irc.glsl"
+#include "/include/ircache.glsl"
 #include "/include/atmosphere.glsl"
 #include "/include/brdf.glsl"
 #include "/include/spaceConversion.glsl"
 
 #include "/include/text.glsl"
 
-/* DRAWBUFFERS:7 */
+/* RENDERTARGETS: 7 */
 layout (location = 0) out vec4 color;
 
 void main ()
@@ -27,5 +27,9 @@ void main ()
 
     vec2 uv = gl_FragCoord.xy * texelSize;
 
-    color.rgb = pow(texelFetch(colortex10, texel, 0).rgb, vec3(2.2)) + calcSkyColor(normalize(screenToPlayerPos(vec3(uv, 0.9)).xyz - screenToPlayerPos(vec3(uv, 0.1)).xyz), sunDir, blueNoise(gl_FragCoord.xy).x);
+    #ifdef DIMENSION_END
+        color = vec4(0.0);
+    #else
+        color.rgb = pow(texelFetch(colortex10, texel, 0).rgb, vec3(2.2)) + calcSkyColor(normalize(screenToPlayerPos(vec3(uv, 0.9)).xyz - screenToPlayerPos(vec3(uv, 0.1)).xyz), sunDir, blueNoise(gl_FragCoord.xy).x);
+    #endif
 }
