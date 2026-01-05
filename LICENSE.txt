@@ -1,4 +1,4 @@
-Project Zephyr Starlight License v1.0
+Project Zephyr Starlight License v1.1
 =====================================
 
 Copyright (c) 2025-2026 Kirilpro6284
@@ -19,8 +19,10 @@ You are permitted to:
 
 3. Restrictions
 You may not, unless you have my explicit written permission:
-- Redistribute The Software in any form.
-- Create and distribute Modified versions of The Software, except for purely private and personal use.
+- Redistribute The Software or any Modified versions of it on any platforms except GitHub.
+    - You cannot claim any of the code included in The Software as your own.
+    - You may not use any monetizing link shorteners (e.g. adf.ly, adfoc.us).
+    - I have to be credited.
 - Demand money in exchange for The Software or any Modified versions of it.
 
 Violation of any of this License's terms immediately terminates your rights to use The Software.
